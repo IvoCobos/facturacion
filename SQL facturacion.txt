@@ -1,0 +1,279 @@
+CREATE ROLE ivan WITH
+  NOLOGIN
+  NOSUPERUSER
+  INHERIT
+  NOCREATEDB
+  NOCREATEROLE
+  NOREPLICATION;
+
+COMMENT ON ROLE ivan IS 'para hacer pruebas';
+
+-- Database: facturacion
+
+-- DROP DATABASE facturacion;
+
+CREATE DATABASE facturacion
+    WITH 
+    OWNER = ivan
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'Spanish_Spain.1252'
+    LC_CTYPE = 'Spanish_Spain.1252'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
+	
+-- Table: public.bodegas
+
+-- DROP TABLE public.bodegas;
+
+CREATE TABLE public.bodegas
+(
+    id integer NOT NULL,
+    nombre character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    "id_Producto" integer NOT NULL,
+    CONSTRAINT bodegas_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.bodegas
+    OWNER to ivan;
+	
+-- Table: public.clientes
+
+-- DROP TABLE public.clientes;
+
+CREATE TABLE public.clientes
+(
+    id integer NOT NULL,
+    "id_Persona" integer NOT NULL,
+    "cat_Cliente" character varying(10) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT empleados_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.clientes
+    OWNER to ivan;
+	
+-- Table: public."detalle_Productos"
+
+-- DROP TABLE public."detalle_Productos";
+
+CREATE TABLE public."detalle_Productos"
+(
+    id integer NOT NULL,
+    "id_Producto" integer NOT NULL,
+    "id_Factura" integer NOT NULL,
+    precio numeric(7,0) NOT NULL,
+    cantidad integer NOT NULL,
+    "valor_Total" numeric(9,0),
+    CONSTRAINT "detalle_Productos_pkey" PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public."detalle_Productos"
+    OWNER to ivan;
+	
+-- Table: public.empleados
+
+-- DROP TABLE public.empleados;
+
+CREATE TABLE public.empleados
+(
+    id integer NOT NULL,
+    "id_Persona" integer NOT NULL,
+    "fechaInicio" date NOT NULL,
+    sueldo numeric(6,0) NOT NULL,
+    CONSTRAINT n1_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.empleados
+    OWNER to ivan;
+	
+-- Table: public.facturas
+
+-- DROP TABLE public.facturas;
+
+CREATE TABLE public.facturas
+(
+    id integer NOT NULL,
+    "numFactura" integer NOT NULL,
+    "fechaFactura" date NOT NULL,
+    "id_Cliente" integer NOT NULL,
+    "id_Empleado" integer NOT NULL,
+    iva numeric(8,0) NOT NULL,
+    total numeric(10,0) NOT NULL,
+    CONSTRAINT facturas_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.facturas
+    OWNER to ivan;
+	
+-- Table: public.juridicos
+
+-- DROP TABLE public.juridicos;
+
+CREATE TABLE public.juridicos
+(
+    "id_Persona" integer NOT NULL,
+    "RUC" character varying(13) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT juridicos_pkey PRIMARY KEY ("id_Persona")
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.juridicos
+    OWNER to ivan;
+	
+-- Table: public.naturales
+
+-- DROP TABLE public.naturales;
+
+CREATE TABLE public.naturales
+(
+    "id_Persona" integer NOT NULL,
+    cedula character varying(10) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT naturales_pkey PRIMARY KEY ("id_Persona")
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.naturales
+    OWNER to ivan;
+	
+-- Table: public.personas
+
+-- DROP TABLE public.personas;
+
+CREATE TABLE public.personas
+(
+    id integer NOT NULL,
+    nombre character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    "id_tipoCedula" integer NOT NULL,
+    direccion character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    telefono character varying(10) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT personas_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.personas
+    OWNER to ivan;
+	
+-- Table: public."producto_Por_Bodega"
+
+-- DROP TABLE public."producto_Por_Bodega";
+
+CREATE TABLE public."producto_Por_Bodega"
+(
+    id integer NOT NULL,
+    "id_Bodega" integer NOT NULL,
+    "id_Producto" integer NOT NULL,
+    cantidad integer NOT NULL,
+    CONSTRAINT "producto_Por_Bodega_pkey" PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public."producto_Por_Bodega"
+    OWNER to ivan;
+	
+-- Table: public.productos
+
+-- DROP TABLE public.productos;
+
+CREATE TABLE public.productos
+(
+    id integer NOT NULL,
+    nombre character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    "fechaCad" date,
+    cantidad integer NOT NULL,
+    "idTipoProducto" integer,
+    "precio_U" numeric(9,0) NOT NULL,
+    CONSTRAINT productos_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.productos
+    OWNER to ivan;
+	
+-- Table: public."proveedor_Por_Producto"
+
+-- DROP TABLE public."proveedor_Por_Producto";
+
+CREATE TABLE public."proveedor_Por_Producto"
+(
+    id integer NOT NULL,
+    "id_Proveedor" integer NOT NULL,
+    "id_Producto" integer NOT NULL,
+    CONSTRAINT "proveedor_Por_Producto_pkey" PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public."proveedor_Por_Producto"
+    OWNER to ivan;
+	
+-- Table: public.proveedores
+
+-- DROP TABLE public.proveedores;
+
+CREATE TABLE public.proveedores
+(
+    id integer NOT NULL,
+    "id_Persona" integer NOT NULL,
+    CONSTRAINT proveedores_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.proveedores
+    OWNER to ivan;
+	
+-- Table: public."tipoProducto"
+
+-- DROP TABLE public."tipoProducto";
+
+CREATE TABLE public."tipoProducto"
+(
+    id integer NOT NULL,
+    "nombre_Tipo" character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "tipoProducto_pkey" PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public."tipoProducto"
+    OWNER to ivan;
